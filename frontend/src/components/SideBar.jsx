@@ -17,7 +17,7 @@ const SideBar = ({ selectedUser, setSelectedUser }) => {
             <img
               src={assets.menu_icon}
               alt="menu"
-              className="max-h-5 cursor-pointer ml-auto"
+              className="max-h-5 cursor-pointer "
             />
             <div className="absoulte top-full right-0 z-20 w-32 p-5 rounded-md bg-[#282142] border-2 border-gray-600 text-gray-100 hidden group-hover:block ">
               <p
@@ -41,7 +41,7 @@ const SideBar = ({ selectedUser, setSelectedUser }) => {
             placeholder="Search User..."
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-4">
           {userDummyData.map((user, index) => (
             <div
               onClick={() => setSelectedUser(user)}

@@ -1,6 +1,6 @@
 import React from "react";
 
-const RightSideBar = () => {
+const RightSideBar = ({ selectedUser, setSelectedUser }) => {
   return <div>RightSideBar</div>;
 };
 
