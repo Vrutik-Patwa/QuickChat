@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import http from "http";
+import { connectDB } from "./lib/db.js";
 
 // Creating express app and HTTP server
 
@@ -17,6 +18,10 @@ app.use(cors());
 app.use("/api/status", (req, res) => {
   res.send("Server is Live");
 });
+
+// connecting to mongodb
+
+await connectDB();
 
 // defining the port no
 
