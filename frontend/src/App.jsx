@@ -4,14 +4,14 @@ import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Toaster } from "react-hot-toast";
 import { useContext } from "react";
-// import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 function App() {
-  // const { authUser } = useContext(AuthContext);
+  const { authUser } = useContext(AuthContext);
   return (
     <div className="  bg-[url('./src/assets/bgImage.svg')] bg-contain">
       <Toaster />
       <Routes>
-        {/* <Route
+        <Route
           path="/"
           element={authUser ? <HomePage /> : <Navigate to="/login" />}
         />
@@ -22,7 +22,7 @@ function App() {
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
-        /> */}
+        />
         <Route path="*" element={<HomePage />} />
       </Routes>
     </div>

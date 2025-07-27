@@ -1,6 +1,8 @@
 import React, { use, useState } from "react";
 import assets from "../assets/assets";
 import { useFormik } from "formik";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 const LoginPage = () => {
   const [currState, setCurrState] = useState("Sign Up");
   /*const [fullName, setFullName] = useState("");
@@ -10,6 +12,7 @@ const LoginPage = () => {
   */
   //  This is one way to do  it another way is to use LoginForm
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
+  const { login } = useContext(AuthContext);
 
   const LoginForm = useFormik({
     initialValues: {
@@ -20,7 +23,13 @@ const LoginPage = () => {
       terms: false,
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
+      if (currState == "Sign up" && !isDataSubmitted) {
+        setIsDataSubmitted(true);
+        return;
+      }
+
+      login(currState === "Sign Up" ? "signup" : "login", { values });
     },
   });
   return (
@@ -58,8 +67,8 @@ const LoginPage = () => {
         {/* <label htmlFor="firstName">First Name</label> */}
         {!isDataSubmitted && (
           <input
-            id="firstName"
-            name="firstName"
+            id="fullName"
+            name="fullName"
             type="text"
             onChange={LoginForm.handleChange}
             value={LoginForm.values.fullName}

@@ -7,9 +7,10 @@ import toast from "react-hot-toast";
 export const AuthContext = createContext();
 import axios from "axios";
 const backend_url = import.meta.env.VITE_BACKEND_URL;
+console.log(backend_url);
 axios.defaults.baseURL = backend_url;
 import { io } from "socket.io-client";
-export const AuthProvier = ({ Children }) => {
+export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [authUser, setAuthUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -29,7 +30,7 @@ export const AuthProvier = ({ Children }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -40,7 +41,7 @@ export const AuthProvier = ({ Children }) => {
       if (data.success) {
         setAuthUser(data.userData);
         connectSocket(data.userData);
-        axios.defaults.header.common["token"] = data.token;
+        axios.defaults.headers.common["token"] = data.token;
         setToken(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
@@ -48,7 +49,7 @@ export const AuthProvier = ({ Children }) => {
         toast.error(data.message);
       }
     } catch (error) {
-      test.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
   //   logout function
@@ -59,13 +60,13 @@ export const AuthProvier = ({ Children }) => {
     setOnlineUsers([]);
     axios.defaults.headers.common["token"] = null;
     toast.success("Logout Successfull");
-    socket.dissconnect();
+    socket.disconnect();
   };
 
   //   function to update user profile
   const updateProfile = async (body) => {
     try {
-      const { data } = await axios.put("api.auth/update-profile", body);
+      const { data } = await axios.put("api/auth/update-profile", body);
       if (data.success) {
         setAuthUser(data.user);
         toast.success("Profile Updated successfully");
@@ -110,5 +111,5 @@ export const AuthProvier = ({ Children }) => {
     updateProfile,
   };
 
-  return <AuthContext.Provider value={value}>{Children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -5,7 +5,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 export const signup = async (req, res) => {
-  const { fullName, email, password, bio } = req.body;
+  const { fullName, email, password, bio } = req.body.values;
 
   try {
     if (!fullName || !email || !password || !bio) {
@@ -18,7 +18,7 @@ export const signup = async (req, res) => {
       return res.json({ success: false, message: "Account Already Exists" });
     }
 
-    const salt = bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await User.create({
@@ -47,8 +47,11 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body.values;
     const userData = await User.findOne({ email });
+    if (!userData) {
+      return res.json({ success: false, message: "User not found" });
+    }
     const isPasswordCorrect = await bcrypt.compare(password, userData.password);
     if (!isPasswordCorrect) {
       return res.json({ success: false, message: "Invalid Credentials" });
