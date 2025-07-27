@@ -4,11 +4,37 @@ import cors from "cors";
 import http from "http";
 import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
-
+import messageRouter from "./routes/messageRoutes.js";
+import { Server } from "socket.io";
 // Creating express app and HTTP server
 
 const app = express();
 const server = http.createServer(app);
+
+// Initalizing the socket.io server
+export const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+// storing online users
+
+export const userSocketMap = {}; //userId:socketID
+
+//Socket.io connection handler
+io.on("connection", (socket) => {
+  const userID = socket.handshake.query.userID;
+  console.log("USER CONNECTED", userId);
+  if (userID) userSocketMap[userID] = socket.id;
+
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  socket.on("disconnect", () => {
+    console.log("User disconnected at", userID);
+    delete userSocketMap[userID];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
 
 // Middleware setup
 
@@ -22,6 +48,8 @@ app.use("/api/status", (req, res) => {
 
 app.use("/api/auth", userRouter);
 // connecting to mongodb
+
+app.use("/api/messages", messageRouter);
 
 await connectDB();
 

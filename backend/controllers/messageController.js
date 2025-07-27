@@ -66,3 +66,28 @@ export const markMessages = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+//function for sending a message to user
+
+export const sendMessage = async (req, res) => {
+  try {
+    const senderId = req.user._id;
+    const { id: recieverId } = req.params;
+    const { message, image } = req.body;
+    let ImageUrl;
+    if (image) {
+      const uploadRespnse = await cloudinary.uploader.upload(image);
+      ImageUrl = uploadRespnse.secure_url;
+    }
+    const newMessage = await Message.create({
+      senderId: senderId,
+      recieverId: recieverId,
+      message: message,
+      image: ImageUrl,
+      seen: false,
+    });
+    res.json({ success: true, newMessage });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
