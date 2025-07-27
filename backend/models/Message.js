@@ -14,8 +14,7 @@ const messageSchema = new mongoose.Schema(
     },
     test: { type: String },
     image: { type: String },
-    seen: { Boolean: false, default: false },
-    
+    seen: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
