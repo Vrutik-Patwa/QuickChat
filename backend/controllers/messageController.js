@@ -1,7 +1,7 @@
 // get all users except logged in user
 
 import Message from "../models/Message.js";
-
+import { io, userSocketMap } from "../server.js";
 export const getUsersForSideBar = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -86,6 +86,11 @@ export const sendMessage = async (req, res) => {
       image: ImageUrl,
       seen: false,
     });
+    // Emitting the new message in the new user socket map
+    const recieverSocketId = userSocketMap[recieverId];
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newMessage", newMessage);
+    }
     res.json({ success: true, newMessage });
   } catch (error) {
     res.json({ success: false, message: error.message });
