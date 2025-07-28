@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }) => {
     }
     const newSocket = io(backend_url, {
       query: {
-        userId: userData._id,
+        userID: userData._id,
       },
     });
     newSocket.connect();
@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }) => {
     newSocket.on("getOnlineUsers", (userIds) => {
       setOnlineUsers(userIds);
     });
+    console.log("OnlineUsers", onlineUsers);
   };
 
   //   we have  to execute this function everytime the websits is loaded so we use useEffect
@@ -100,6 +101,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common["token"] = token;
     }
+    // console.log(onlineUsers);
     checkAuth();
   }, []);
   const value = {

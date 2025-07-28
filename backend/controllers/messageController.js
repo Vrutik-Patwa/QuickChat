@@ -2,18 +2,22 @@
 
 import Message from "../models/Message.js";
 import { io, userSocketMap } from "../server.js";
+import User from "../models/User.js";
+import mongoose from "mongoose";
 export const getUsersForSideBar = async (req, res) => {
   try {
     const userId = req.user._id;
+    console.log("UsrId", userId);
     const filteredUsers = await User.find({ _id: { $ne: userId } }).select(
       "-password"
     );
+    console.log("FilteredUsers", filteredUsers);
     // count no of messages not seen
     const UnseenMessage = {};
     const promises = filteredUsers.map(async (user) => {
       const message = await Message.find({
         senderId: user._id,
-        recieverId: userID,
+        recieverId: userId,
         seen: false,
       });
       if (message.length > 0) {
