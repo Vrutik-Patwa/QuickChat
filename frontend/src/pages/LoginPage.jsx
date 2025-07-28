@@ -165,6 +165,21 @@ const LoginPage = () => {
             </p>
           </div>
         )}
+        {isDataSubmitted && (
+          <button
+            className="py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer"
+            onClick={() => {
+              login("login", {
+                values: {
+                  email: "as@gmail.com",
+                  password: "as",
+                },
+              });
+            }}
+          >
+            Login as Guest
+          </button>
+        )}
       </form>
     </div>
   );
