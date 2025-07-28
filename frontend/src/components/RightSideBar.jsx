@@ -2,9 +2,20 @@ import React from "react";
 import assets, { imagesDummyData } from "../assets/assets";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const RightSideBar = ({ selectedUser, setSelectedUser }) => {
-  const { logout } = useContext(AuthContext);
+const RightSideBar = () => {
+  const { logout, onlineUsers } = useContext(AuthContext);
+  const { selectedUser, messages } = useContext(ChatContext);
+  const [msgImages, setmsgImages] = useState([]);
+
+  // getting all images and setting them to state
+  useEffect(() => {
+    setmsgImages(messages.filter((msg) => msg.Image).map((msg) => msg.Image));
+    // console.log("rsuse", selectedUser);
+  }, [selectedUser]);
   return (
     selectedUser && (
       <div
@@ -18,7 +29,9 @@ const RightSideBar = ({ selectedUser, setSelectedUser }) => {
             className="w-20 aspect-[1/1] rounded-full"
           />
           <h1 className="px-10 text-xl font-medium  mx-auto flex items-center gap-2 ">
-            <p className="w-2 h-2 rounded-full bg-green-500"></p>
+            {onlineUsers.includes(selectedUser._id) && (
+              <p className="w-2 h-2 rounded-full bg-green-500"></p>
+            )}
             {selectedUser.fullName}
           </h1>
           <p className="px-2 mx-auto">{selectedUser.bio}</p>
@@ -27,7 +40,7 @@ const RightSideBar = ({ selectedUser, setSelectedUser }) => {
         <div className="px-5 text-xs">
           <p>Media</p>
           <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
-            {imagesDummyData.map((url, index) => (
+            {msgImages.map((url, index) => (
               <div
                 key={index}
                 onClick={() => window.open(url)}
