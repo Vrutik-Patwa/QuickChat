@@ -48,7 +48,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body.values;
-    const userData = await User.findOne({ email });
+    const userData = await User.findOne({ email: email });
     if (!userData) {
       return res.json({ success: false, message: "User not found" });
     }
@@ -56,6 +56,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.json({ success: false, message: "Invalid Credentials" });
     }
+    const token = generateToken(userData._id);
     res.json({
       success: true,
       userData,
@@ -78,23 +79,23 @@ export const checkAuth = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilPic, bio, fullName } = req.body;
+    const { profilePic, bio, name } = req.body;
     const userId = req.user._id;
     let updateUser;
     if (!profilePic) {
       updateUser = await User.findByIdAndUpdate(
         userId,
-        { bio, fullName },
+        { fullName: name, bio: bio },
         { new: true }
       );
     } else {
-      const upload = await cloudinary.uploader.upload(profilPic);
+      const upload = await cloudinary.uploader.upload(profilePic);
       updateUser = await User.findByIdAndUpdate(
         userId,
         {
           profilePic: upload.secure_url,
-          bio,
-          fullName,
+          bio: bio,
+          fullName: name,
         },
         { new: true }
       );

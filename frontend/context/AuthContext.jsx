@@ -19,13 +19,14 @@ export const AuthProvider = ({ children }) => {
   //   Checking if user is authennticated if so,set the data and connecting the user to the socket
   const checkAuth = async () => {
     try {
-      const data = await axios.get("/api/auth/check");
+      const { data } = await axios.get("/api/auth/check");
 
       if (data.success) {
         setAuthUser(data.user);
         connectSocket(data.user);
+        console.log("Success");
       } else {
-        console.log(data.message);
+        console.log("Here", data, data.message);
         toast.error(data.message);
       }
     } catch (error) {
@@ -97,7 +98,7 @@ export const AuthProvider = ({ children }) => {
   //   we have  to execute this function everytime the websits is loaded so we use useEffect
   useEffect(() => {
     if (token) {
-      axios.defaults.header.common["token"] = token;
+      axios.defaults.headers.common["token"] = token;
     }
     checkAuth();
   }, []);

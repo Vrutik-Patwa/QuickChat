@@ -23,7 +23,7 @@ function App() {
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
-        <Route path="*" element={<HomePage />} />
+        {/* <Route path="*" element={<HomePage />} /> */}
       </Routes>
     </div>
   );
