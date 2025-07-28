@@ -6,6 +6,7 @@ import { AuthContext } from "./AuthContext";
 import { data } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+// import { getMessages } from "../../backend/controllers/messageController";
 
 export const ChatContext = createContext();
 
@@ -32,10 +33,12 @@ export const ChatProvider = ({ children }) => {
     }
   };
   //   function to get message foe selecter user
-  const getSelectedMessages = async (userID) => {
+  const getMessages = async (userID) => {
     try {
       const { data } = await axios.get(`api/messages/${userID}`);
+      console.log("data outside", data);
       if (data.success) {
+        console.log("Data", data);
         setMessages(data.messages);
       }
     } catch {
@@ -46,14 +49,20 @@ export const ChatProvider = ({ children }) => {
   //   function to send message to a user
   const sendMessage = async (messageData) => {
     try {
+      console.log(selectedUser._id);
       const { data } = await axios.post(
         `/api/messages/send/${selectedUser._id}`,
         messageData
       );
+      console.log(data);
       if (data.success) {
+        console.log("calling set messages");
         setMessages((prevMessages) => {
-          [...prevMessages, data.newMessage];
+          const updated = [...prevMessages, data.newMessage];
+          console.log("Inside setMessages update:", updated);
+          return updated;
         });
+        // console.log("Messages", messages);
       } else {
         toast.error(data.message);
       }
@@ -61,6 +70,12 @@ export const ChatProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+
+  //   Just to debug messages
+
+  useEffect(() => {
+    console.log("Updated Messages", messages);
+  }, [messages]);
 
   //   subscribe to messages for current user
   const subscribeToMessages = async () => {
@@ -99,6 +114,7 @@ export const ChatProvider = ({ children }) => {
     setSelectedUser,
     unseenMessages,
     setUnseenMessages,
+    getMessages,
   };
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
 };

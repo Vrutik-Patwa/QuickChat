@@ -22,7 +22,7 @@ const SideBar = () => {
   const [input, setInput] = useState();
   const filteredUsers = input
     ? users.filter((user) =>
-        user.fullName.toLowerCase().includes(input().toLowerCase)
+        user.fullName.toLowerCase().includes(input.toLowerCase())
       )
     : users;
 

@@ -37,28 +37,35 @@ export const getMessages = async (req, res) => {
   try {
     const { id: selectedUserId } = req.params;
     const myId = req.user._id;
-    const { messages, seen } = await Message.find(
-      $or[
-        ({
-          senderId: selectedUserIdid,
-          recieverId: recieverId,
+
+    // Correct query and response handling
+    const messages = await Message.find({
+      $or: [
+        {
+          senderId: selectedUserId,
+          recieverId: myId,
         },
         {
-          recieverId: selectedUserIdid,
-          senderId: recieverId,
-        })
-      ]
-    );
+          recieverId: selectedUserId,
+          senderId: myId,
+        },
+      ],
+    }).sort({ createdAt: 1 }); // Optional: sort messages by time
+
+    // Update seen status of messages sent by selectedUserId to me
     await Message.updateMany(
       { senderId: selectedUserId, recieverId: myId },
       { seen: true }
     );
+
+    console.log("selectedUserMessages", messages);
+
     res.json({ success: true, messages });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
 // api to mark  messages seen using id
 
 export const markMessages = async (req, res) => {
@@ -86,7 +93,7 @@ export const sendMessage = async (req, res) => {
     const newMessage = await Message.create({
       senderId: senderId,
       recieverId: recieverId,
-      message: message,
+      text: message,
       image: ImageUrl,
       seen: false,
     });
